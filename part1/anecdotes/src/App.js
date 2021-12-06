@@ -12,12 +12,66 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0)
+  const[points,setPoints] = useState([0,0,0,0,0,0,0])
+  
 
-  return (
-    <div>
-      {anecdotes[selected]}
-    </div>
-  )
+  const handlePointChange = ()=>{
+    const copy = [...points]
+    copy[selected] += 1
+    setPoints(copy)
+  }
+
+  const handleChangeAnecdote = ()=>{
+    let rand = Math.floor(Math.random() * 7);
+    while(rand === selected){
+      rand = Math.floor(Math.random() * 7);
+    }
+    console.log(rand)
+    setSelected(rand)
+  }
+  const maxPoints = Math.max(...points)
+  const indexMax = points.indexOf(Math.max(...points));
+  if(points[selected] === maxPoints){
+    return (
+      <div>
+      <h1>Anecdote of the day</h1>
+      <div>
+        {anecdotes[selected]}
+  
+      </div>
+      <div>
+        has {points[selected]}
+      </div>
+        <button onClick = {handlePointChange}>vote</button>
+        <button onClick = {handleChangeAnecdote}>next anecdote</button>
+      </div>
+    )
+  }else{
+    return (
+      <div>
+      <h1>Anecdote of the day</h1>
+      <div>
+        {anecdotes[selected]}
+  
+      </div>
+      <div>
+        has {points[selected]}
+      </div>
+        <button onClick = {handlePointChange}>vote</button>
+        <button onClick = {handleChangeAnecdote}>next anecdote</button>
+      <h1>Anecdote with the most votes</h1>
+      <div>
+        {anecdotes[indexMax]}
+  
+      </div>
+      <div>
+        has {maxPoints}
+      </div>
+        <button onClick = {handlePointChange}>vote</button>
+        <button onClick = {handleChangeAnecdote}>next anecdote</button>
+      </div>
+    )
+  }
 }
 
 export default App
