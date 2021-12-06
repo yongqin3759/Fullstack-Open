@@ -1,8 +1,8 @@
 import React from "react";
 
-const Header = (props) => {
+const Header = ({course}) => {
 	return (
-		<h1>{props.course}</h1>
+		<h1>{course.name}</h1>
 	)
 };
 const Content = (props) => {
@@ -49,7 +49,7 @@ const App = () => {
 
 	return (
 		<div>
-			<Header course={course.name}></Header>
+			<Header course={course}></Header>
 			<Content part={course.parts}></Content>
 
 			<Total

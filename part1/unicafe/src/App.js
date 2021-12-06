@@ -13,12 +13,21 @@ const GiveFeedback = ({feedback}) =>{
   )
 }
 
+const StatisticsLine = (props) => {
+  return (
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>   
+    </tr>
+  )
+}
+
 const Statistics = ({feedback})=>{
   const {good,bad,neutral} = feedback
   const total = good.val+bad.val+neutral.val
   const avg = Number(((good.val-bad.val)/total).toPrecision(2))
-  const positive = Number((good.val/total*100).toPrecision(1))
-  if(good.val === 0 && bad.val === 0 && neutral.val === 0){
+  const positive = Number((good.val/total*100).toPrecision(2))
+  if(total === 0){
     return(
       <div>
         <h1>statistics</h1>
@@ -30,33 +39,15 @@ const Statistics = ({feedback})=>{
       <div>
         <h1>statistics</h1>
         <table>
-  <tr>
-    <td>{good.text}</td>
-    <td>{good.val}</td>
-  </tr>
-<tbody>
-  <tr>
-    <td>{neutral.text}</td>
-    <td>{neutral.val}</td>
-  </tr>
-  <tr>
-    <td>{bad.text}</td>
-    <td>{bad.val}</td>
-  </tr>
-  <tr>
-    <td>all</td>
-    <td>{total}</td>
-  </tr>
-  <tr>
-    <td>average</td>
-    <td>{avg}</td>
-  </tr>
-  <tr>
-    <td>positive</td>
-    <td>{positive}</td>
-  </tr>
-</tbody>
-</table>
+          <tbody>
+            <StatisticsLine text ={good.text} value = {good.val}/>
+            <StatisticsLine text ={neutral.text} value = {neutral.val}/>
+            <StatisticsLine text ={bad.text} value = {bad.val}/>
+            <StatisticsLine text ='all' value = {total}/>
+            <StatisticsLine text ='average' value = {avg}/>
+            <StatisticsLine text ='positve' value = {`${positive} %`}/>
+          </tbody>
+        </table>
       </div>
     )
 
