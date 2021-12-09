@@ -2,19 +2,21 @@ import React, { useEffect, useState } from 'react'
 import PhoneNumberList from './components/PhoneNumberList'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
+import phoneList from './services/phoneList'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState({text:null,isGood:true})
 
   useEffect(()=>{
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response=>{
-        setPersons(response.data)
+    phoneList
+      .getAll()
+      .then(initialPhoneList=>{
+        setPersons(initialPhoneList)
       })
   },[])
   
@@ -24,16 +26,46 @@ const App = () => {
 
   const handleSubmit=(e)=>{
     e.preventDefault()
-    if(persons.filter(person=>(person.name === newName)).length >= 1){
-      alert(`${newName} is already added to phonebook`)
+    const foundPerson = persons.find(person=>(person.name === newName))
+    
+    if(foundPerson){
+      if(window.confirm('This person already exists, would you like to update their number?')){
+        console.log(foundPerson)
+        handleUpdate(foundPerson)
+        handleNotification(true,`Changed ${foundPerson.name}`)
+      }
       return
     }
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: persons.length+1,
     }
-    setPersons(persons.concat(newPerson))
+    phoneList.create(newPerson).then(newContact=>{
+      console.log(newContact)
+      // Set state here so that Persons is rendered with id
+      setPersons(persons.concat(newContact))
+      handleNotification(true,`Added ${newContact.name}`)
+    })
+
+    // This is wrong
+    // setPersons(persons.concat(newPerson))
+  }
+
+  const handleNotification = (isGood, text)=>{
+    setMessage({isGood: isGood, text: text})
+      setTimeout(() => {
+        setMessage({isGood:null,text:null})
+      }, 5000)
+  }
+
+  const handleUpdate = (person) =>{
+    const changedPerson = {...person, number: newNumber }
+    phoneList
+      .update(person.id, changedPerson)
+      .then(()=>{
+        setPersons(persons.map(person=> (person.id === changedPerson.id? changedPerson: person)))
+        console.log('returned')
+      })
   }
 
   const handleNewNumberChange = (e)=>{
@@ -43,13 +75,27 @@ const App = () => {
   const personsToShow = (filter==='')? persons : persons.filter(person=>person.name.toLowerCase().includes(filter.toLowerCase()))
 
   const handleFilterChange = (e)=>{
-    console.log()
     setFilter(e.target.value)
   }
+
+  const removePhoneNumber = (id)=>{
+    const removedPerson = persons.filter(person=>person.id === id)[0]
+    if(window.confirm(`Are you sure you want to delete ${removedPerson.name}`)){
+      phoneList.remove(id,removedPerson)
+        .then(()=>{
+          setPersons(persons.filter(person => person.id !== removedPerson.id))
+        })
+        .catch(()=>{
+          handleNotification(false,`${removedPerson.name} has already been removed from server`)
+          setPersons(persons.filter(person => person.id !== removedPerson.id))
+        })
+    }
+	}
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification isGood={message.isGood} message={message.text} />
         <Filter value={filter} onChange= {handleFilterChange}/>
       <form>
       <h2>Add a new</h2>
@@ -61,7 +107,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      <PhoneNumberList persons={personsToShow}/>
+      <PhoneNumberList persons={personsToShow} onClick={removePhoneNumber}/>
     </div>
   )
 }

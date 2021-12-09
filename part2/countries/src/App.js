@@ -23,6 +23,8 @@ const App = () => {
   if(countriesToShow.length >10){
     countriesToShow =[]
     prompt = 'Too many matches, specify another filter'
+  }else if(countriesToShow.length===0 && filter !== ''){
+    prompt = 'No countries match this filter'
   }
 
   return (
