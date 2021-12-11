@@ -13,7 +13,7 @@ const Footer = () => {
   return (
     <div style={footerStyle}>
       <br />
-      <em>Note app, Department of Computer Science, University of Helsinki 2021</em>
+      <em>Note app, By Yong Qin (credit to Sreekar and Tiff for helping me out)and Department of Computer Science, University of Helsinki 2021</em>
     </div>
   )
 }
@@ -21,13 +21,12 @@ const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('a new note...') 
   const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState('looks like theres some error')
+  const [errorMessage, setErrorMessage] = useState(null)
   
   useEffect(()=> 
     noteService
     .getAll()
       .then(initialNotes => {
-        console.log('promise fulfilled')
         setNotes(initialNotes)
     }), [])
 
@@ -41,9 +40,9 @@ const App = () => {
 
     noteService
     .create(noteObject)
-    .then(initialNotes => {
-      console.log(initialNotes)
-      setNotes(notes.concat(initialNotes))
+    .then(returnedNote => {
+      console.log(returnedNote)
+      setNotes(notes.concat(returnedNote))
       setNewNote('')
     })
   }
@@ -55,13 +54,13 @@ const App = () => {
 
   const toggleImportanceOf = (id) => {
     console.log('importance of ' + id + ' needs to be toggled')
-    const url = `http://localhost:3001/notes/${id}`
     const note = notes.find(n => n.id === id)
     const changedNote = {...note, important: !note.important}
     console.log(note)
     noteService
       .update(id,changedNote)
       .then(returnedNote => {
+        console.log('returned note', returnedNote)
         setNotes(notes.map(note => note.id !== id ? note : returnedNote))
     })
     .catch(error => {

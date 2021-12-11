@@ -1,6 +1,9 @@
 const { request, response } = require('express')
 const express = require('express')
+const cors = require('cors')
+
 const app = express()
+
 
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
@@ -10,14 +13,15 @@ const requestLogger = (request, response, next) => {
     next()
   }
 
-const unknownEndpoint = (request, response) => {
-response.status(404).send({ error: 'unknown endpoint' })
-}
+  
 
+app.use(express.static('build'))
 
 //use express json-parser 
 app.use(express.json())
+app.use(cors())
 app.use(requestLogger)
+
 
 
 let notes = [
@@ -42,7 +46,7 @@ let notes = [
 ]
 
 app.get('/', (request, response) => {
-    response.send('<h1>Hello World!</h1>')
+    response.send('<h1>Hello World!</h1><p>Tiff is cute</p>')
 })
 
 app.get('/api/notes', (request, response) => {
@@ -77,7 +81,7 @@ const generateID = () =>{
 
 app.post('/api/notes', (request,response) => {
     const body = request.body
-
+    console.log(body.content)
     if(!body.content){
         return response.status(400).json({
             error: 'content missing'
@@ -96,9 +100,13 @@ app.post('/api/notes', (request,response) => {
     response.json(note)
   })
 
-const PORT = 3001
+const unknownEndpoint = (request, response) => {
+response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+const PORT = process.env.PORT || 3001
     app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
-
-app.use(unknownEndpoint)
