@@ -28,27 +28,28 @@ const App = () => {
     e.preventDefault()
     const foundPerson = persons.find(person=>(person.name === newName))
     
-    if(foundPerson){
-      if(window.confirm('This person already exists, would you like to update their number?')){
+    if(foundPerson && window.confirm('This person already exists, would you like to update their number?')){
         console.log(foundPerson)
         handleUpdate(foundPerson)
-        handleNotification(true,`Changed ${foundPerson.name}`)
+        
+    }else{
+      const newPerson = {
+        name: newName,
+        number: newNumber,
       }
-      return
+      phoneList.create(newPerson).then(res=>{
+        if(res.usefulErrorMsg){
+          handleNotification(false, res.usefulErrorMsg)
+        }else{
+          let newContact = res
+          console.log(newContact)
+          // Set state here so that Persons is rendered with id
+          setPersons(persons.concat(newContact))
+          handleNotification(true,`Added ${newContact.name}`)
+        }
+      })
     }
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-    }
-    phoneList.create(newPerson).then(newContact=>{
-      console.log(newContact)
-      // Set state here so that Persons is rendered with id
-      setPersons(persons.concat(newContact))
-      handleNotification(true,`Added ${newContact.name}`)
-    })
-
-    // This is wrong
-    // setPersons(persons.concat(newPerson))
+    
   }
 
   const handleNotification = (isGood, text)=>{
@@ -60,11 +61,16 @@ const App = () => {
 
   const handleUpdate = (person) =>{
     const changedPerson = {...person, number: newNumber }
+    console.log('here')
     phoneList
       .update(person.id, changedPerson)
-      .then(()=>{
-        setPersons(persons.map(person=> (person.id === changedPerson.id? changedPerson: person)))
-        console.log('returned')
+      .then((res)=>{
+        if(res.usefulErrorMsg){
+          handleNotification(false,res.usefulErrorMsg)
+        }else{
+          setPersons(persons.map(person=> (person.id === changedPerson.id? changedPerson: person)))
+          handleNotification(true,`Changed ${person.name}`)
+        }
       })
   }
 
