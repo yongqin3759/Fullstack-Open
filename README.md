@@ -6,3 +6,5 @@ I'm doing this course in hopes of expanding the breadth of my knowledge in the b
 To be able to see part 2 in action, sign up to https://api.openweathermap.org/ and add a .env file to the root folder.
 
 Then add REACT_APP_API_KEY={you_api_key} inside the .env file
+
+For part 3. I the practice website is on https://protected-ocean-74133.herokuapp.com/
