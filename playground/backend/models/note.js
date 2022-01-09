@@ -1,17 +1,5 @@
 const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URI
-
-console.log('connecting to', url)
-
-mongoose.connect(url)
-  .then(result => {
-    console.log('connected to MongoDB')
-  })
-  .catch((error) => {
-    console.log('error connecting to MongoDB:', error.message)
-  })
-
 // Define validation rules
 const noteSchema = new mongoose.Schema({
   content: {
@@ -19,7 +7,7 @@ const noteSchema = new mongoose.Schema({
     minLength: 5,
     required: true
   },
-  date: { 
+  date: {
     type: Date,
     required: true
   },
