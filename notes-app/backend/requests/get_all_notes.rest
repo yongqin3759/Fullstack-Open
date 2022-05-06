@@ -35,9 +35,9 @@ Content-Type: application/json
 
 {
     "notes": [],
-    "username": "mluukkai",
-    "name": "Matti Luukkainen",
-    "password": "salainen"
+    "username": "yongqin",
+    "name": "Yong Qin",
+    "password": "123456"
 }
 
 ###
