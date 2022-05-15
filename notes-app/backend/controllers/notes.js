@@ -33,6 +33,9 @@ notesRouter.post('/', async (request, response) => {
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
+  if (body.content.length < 5) {
+    return response.status(400).json({ error: 'Token is less than 5 characters' })
+  }
   const user = await User.findById(decodedToken.id)
 
   const note = new Note({
