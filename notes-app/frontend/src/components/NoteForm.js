@@ -1,7 +1,7 @@
-import {useState} from 'react'
+import { useState } from 'react'
 
 const NoteForm = ({ createNote }) => {
-  const [newNote, setNewNote ] = useState('... a new note')
+  const [newNote, setNewNote] = useState('... a new note')
 
   const handleChange = (event) => {
     setNewNote(event.target.value)
@@ -11,7 +11,7 @@ const NoteForm = ({ createNote }) => {
     e.preventDefault()
     createNote({
       content: newNote,
-      important: Math.random() > 0.5
+      important: Math.random() > 0.5,
     })
   }
   return (
@@ -19,10 +19,7 @@ const NoteForm = ({ createNote }) => {
       <h2>Create a new note</h2>
 
       <form onSubmit={addNote}>
-        <input
-          value={newNote}
-          onChange={handleChange}
-        />
+        <input value={newNote} onChange={handleChange} />
         <button type="submit">save</button>
       </form>
     </div>
