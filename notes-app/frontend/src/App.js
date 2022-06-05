@@ -12,6 +12,8 @@ const App = () => {
   const [notes, setNotes] = useState([])
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const noteFormRef = useRef()
 
@@ -32,7 +34,8 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (username, password) => {
+  const handleLogin = async (e) => {
+    e.preventDefault()
     try {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
@@ -94,11 +97,19 @@ const App = () => {
       <h1>Notes</h1>
       <Notification message={errorMessage} />
       {user === null ? (
-        <LoginForm login={handleLogin} />
+        <Togglable buttonLabel="login">
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+        </Togglable>
       ) : (
         <div>
-          <button onClick={logoutHandler}>Logout</button>
-          <p>{user.name} logged-in</p>
+          <p>{user.name} logged in</p>
+          <button onClick={logoutHandler}>logout</button>
           <Togglable buttonLabel="new note" ref={noteFormRef}>
             <NoteForm createNote={addNote} />
           </Togglable>
