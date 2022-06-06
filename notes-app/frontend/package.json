@@ -19,7 +19,7 @@
     "server": "json-server -p3001 --watch db.json",
     "cypress:open": "cypress open"
   },
-  "proxy": "http://localhost:3003",
+  "proxy": "http://localhost:3001",
   "browserslist": {
     "production": [
       ">0.2%",
