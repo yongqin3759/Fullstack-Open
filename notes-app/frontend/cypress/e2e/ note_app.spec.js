@@ -44,10 +44,7 @@ describe('Note app', function() {
   
   describe('when logged in', function() {
     beforeEach(function() {
-      cy.contains('login').click()
-      cy.get('input:first').type('qin')
-      cy.get('input:last').type('yongqin')
-      cy.get('#login-button').click()
+      cy.login({ username: 'qin', password: 'yongqin' })
     })
 
     it('a new note can be created', function() {
@@ -59,9 +56,10 @@ describe('Note app', function() {
 
     describe('and a note exists', function(){
       beforeEach(function(){
-        cy.contains('new note').click()
-        cy.get('input').type('another note cypress')
-        cy.contains('save').click()
+        cy.createNote({
+          content: 'another note cypress',
+          important:false
+        })
       })
 
 
@@ -71,6 +69,23 @@ describe('Note app', function() {
           .click()
         
         cy.contains('another note cypress')
+          .contains('make not important')
+      })
+    })
+
+    describe('and several notes exist', function () {
+      beforeEach(function () {
+        cy.createNote({ content: 'first note', important: false })
+        cy.createNote({ content: 'second note', important: false })
+        cy.createNote({ content: 'third note', important: false })
+      })
+  
+      it('one of those can be made important', function () {
+        cy.contains('second note')
+          .contains('make important')
+          .click()
+  
+        cy.contains('second note')
           .contains('make not important')
       })
     })
